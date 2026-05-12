@@ -12,7 +12,7 @@ function Navbar({ user, setUser, setCat }) {
       {/* Routes seen by everyone */}
       <div className="nav-left">
         <Link className="logo" to="/">
-          MeowFocus
+          StudyCat
         </Link>
       </div>
 
