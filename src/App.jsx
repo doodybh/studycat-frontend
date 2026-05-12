@@ -18,7 +18,7 @@ function App() {
   async function checkCat(token) {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/cats/mine`,
+        `${import.meta.env.VITE_BACKEND_URL}/cat`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

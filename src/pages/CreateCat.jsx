@@ -6,7 +6,7 @@ import CatPreview from "../components/CatPreview";
 import { colornames } from "color-name-list";
 import nearestColor from "nearest-color";
 
-function CreateCat() {
+function CreateCat({ setCat }) {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -40,12 +40,17 @@ function CreateCat() {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/cat`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/cat`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
+      );
 
+      setCat(response.data);
       navigate("/dashboard");
     } catch (err) {
       setErrorMessage(err.response?.data?.err || "Could not create cat");
