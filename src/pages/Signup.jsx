@@ -1,34 +1,48 @@
-import { useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router';
+import { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router";
 
-function Signup() {
+function Signup({ setUser }) {
   const [formData, setFormData] = useState({
-    username: '',
-    password: '',
+    username: "",
+    email: "",
+    password: "",
   });
-  const [errorMessage, setErrorMessage] = useState('');
 
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (event) => {
     setFormData({ ...formData, [event.target.name]: event.target.value });
   };
 
-  async function handleSubmit(event){
-    event.preventDefault()
+  async function handleSubmit(event) {
+    event.preventDefault();
 
     try {
-      await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/sign-up`, formData);
-      navigate('/sign-in');
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/auth/sign-up`,
+        formData,
+      );
+
+      const token = response.data.token;
+      const userInfo = JSON.parse(atob(token.split(".")[1])).payload;
+
+      localStorage.setItem("token", token);
+      setUser(userInfo);
+
+      navigate("/create-cat");
     } catch (err) {
-      setErrorMessage(err.response?.data?.err || 'An error occurred during sign up');
+      setErrorMessage(
+        err.response?.data?.err || "An error occurred during sign up",
+      );
     }
-  };
+  }
 
   return (
     <div>
       <h1>Sign Up</h1>
+
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="username">Username:</label>
@@ -41,6 +55,19 @@ function Signup() {
             required
           />
         </div>
+
+        <div>
+          <label htmlFor="email">Email:</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
         <div>
           <label htmlFor="password">Password:</label>
           <input
@@ -52,9 +79,15 @@ function Signup() {
             required
           />
         </div>
+
         <button type="submit">Sign Up</button>
       </form>
-      {errorMessage && <p style={{ color: 'red' }} role="alert">{errorMessage}</p>}
+
+      {errorMessage && (
+        <p style={{ color: "red" }} role="alert">
+          {errorMessage}
+        </p>
+      )}
     </div>
   );
 }
