@@ -174,9 +174,11 @@ button:hover {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 18px;
+  margin-bottom: 24px;
 }
 
-.panel {
+.panel,
+.notes-card {
   background: white;
   border: 1px solid #f5d8e7;
   border-radius: 24px;
@@ -184,8 +186,128 @@ button:hover {
   box-shadow: 0 12px 30px rgba(255, 111, 169, 0.08);
 }
 
-.panel h2 {
+.panel h2,
+.notes-card h2 {
   color: #38334a;
+  margin-top: 0;
+}
+
+.fixed-panel {
+  height: 310px;
+  overflow: hidden;
+}
+
+.timer-text {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #ff6fa9;
+  margin-top: 28px;
+}
+
+.subjects-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.subjects-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.add-subject-button {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  padding: 0;
+  font-size: 1.5rem;
+}
+
+.subject-form {
+  display: grid;
+  grid-template-columns: 1fr 58px;
+  gap: 10px;
+}
+
+.subject-form input[type="text"] {
+  height: 48px;
+}
+
+.subject-color-picker {
+  height: 48px !important;
+  padding: 5px !important;
+}
+
+.subjects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  padding-right: 4px;
+  flex: 1;
+}
+
+.subject-button {
+  background: #fffafd;
+  color: #4b4453;
+  border: 3px solid #f1cfe0;
+  text-align: left;
+  font-weight: 700;
+  min-height: 46px;
+  flex-shrink: 0;
+}
+
+.subject-button:hover {
+  background: #fa9ec9;
+  color: #4b4453;
+}
+
+.selected-subject {
+  background: #ffc6de;
+  color: #38334a;
+}
+
+.cat-info-panel p {
+  background: #fff7fb;
+  border-radius: 14px;
+  padding: 12px 14px;
+  color: #5f566e;
+  font-weight: 600;
+}
+
+.notes-card {
+  height: 360px;
+  display: flex;
+  flex-direction: column;
+}
+
+.notes-header {
+  margin-bottom: 12px;
+}
+
+.notes-card textarea {
+  flex: 1;
+  resize: none;
+  overflow-y: auto;
+  border: 2px solid #f1cfe0;
+  border-radius: 18px;
+  padding: 16px;
+  font-family: inherit;
+  font-size: 1rem;
+  background: #fffafd;
+  color: #38334a;
+  line-height: 1.5;
+}
+
+.notes-card textarea:focus {
+  outline: none;
+  border-color: #ff82bd;
+}
+
+.notes-card textarea:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 @media (max-width: 850px) {
@@ -199,5 +321,9 @@ button:hover {
 
   .draggable-cat {
     width: 180px;
+  }
+
+  .fixed-panel {
+    height: 300px;
   }
 }
