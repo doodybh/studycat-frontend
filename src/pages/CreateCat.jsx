@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router";
 import CatPreview from "../components/CatPreview";
@@ -16,15 +16,19 @@ function CreateCat() {
 
   const [errorMessage, setErrorMessage] = useState("");
 
-  const colors = {};
+  const nearest = useMemo(() => {
+    const colors = {};
 
-  colornames.forEach((color) => {
-    colors[color.name] = color.hex;
-  });
+    colornames.forEach((color) => {
+      colors[color.name] = color.hex;
+    });
 
-  const nearest = nearestColor.from(colors);
+    return nearestColor.from(colors);
+  }, []);
 
-  const colorName = nearest(formData.color).name;
+  const colorName = useMemo(() => {
+    return nearest(formData.color).name;
+  }, [formData.color, nearest]);
 
   function handleChange(event) {
     setFormData({ ...formData, [event.target.name]: event.target.value });

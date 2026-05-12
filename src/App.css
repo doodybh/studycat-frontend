@@ -113,3 +113,13 @@ button:hover {
   margin: 10px 0 20px;
   color: #7c728a;
 }
+.selected-color a {
+  color: #ff6fa9;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.selected-color a:hover {
+  color: #ff4f96;
+  text-decoration: underline;
+}
