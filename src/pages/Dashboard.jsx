@@ -4,7 +4,7 @@ import CatPreview from "../components/CatPreview";
 
 import starterRoom from "../assets/backgrounds/background-1.png";
 
-function Dashboard({ user, cat }) {
+function Dashboard({ user, setUser, cat }) {
   const [catPosition, setCatPosition] = useState({
     x: 50,
     y: 55,
@@ -18,6 +18,14 @@ function Dashboard({ user, cat }) {
     color: "#ff82bd",
   });
 
+  const [timerMode, setTimerMode] = useState("countdown");
+  const [sessionMinutes, setSessionMinutes] = useState(25);
+  const [timeElapsed, setTimeElapsed] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(25 * 60);
+  const [isStudying, setIsStudying] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [breakSeconds, setBreakSeconds] = useState(0);
+
   const backgrounds = {
     "starter-room": starterRoom,
   };
@@ -27,6 +35,83 @@ function Dashboard({ user, cat }) {
   useEffect(() => {
     getSubjects();
   }, []);
+
+  useEffect(() => {
+    if (!isStudying || isPaused) return;
+
+    const timer = setInterval(() => {
+      if (timerMode === "countdown") {
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            endSession();
+            return 0;
+          }
+
+          return prev - 1;
+        });
+
+        setTimeElapsed((prev) => prev + 1);
+      } else {
+        setTimeElapsed((prev) => prev + 1);
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [isStudying, isPaused, timerMode]);
+
+  useEffect(() => {
+    if (!isStudying || !isPaused) return;
+
+    const breakTimer = setInterval(() => {
+      setBreakSeconds((prev) => prev + 1);
+    }, 1000);
+
+    return () => clearInterval(breakTimer);
+  }, [isStudying, isPaused]);
+
+  useEffect(() => {
+    window.studyDebug = {
+      addTime(seconds) {
+        setTimeElapsed((prev) => prev + seconds);
+
+        if (timerMode === "countdown") {
+          setTimeLeft((prev) => Math.max(0, prev - seconds));
+        }
+      },
+
+      addBreak(seconds) {
+        setBreakSeconds((prev) => prev + seconds);
+      },
+
+      giveXP(xpAmount) {
+        setUser((prev) => ({
+          ...prev,
+          xp: prev.xp + xpAmount,
+        }));
+      },
+
+      setLevel(level) {
+        setUser((prev) => ({
+          ...prev,
+          level,
+        }));
+      },
+
+      setCoins(coins) {
+        setUser((prev) => ({
+          ...prev,
+          coins,
+        }));
+      },
+    };
+  }, [timerMode, setUser]);
+
+  function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+
+    return `${minutes}:${secs.toString().padStart(2, "0")}`;
+  }
 
   async function getSubjects() {
     try {
@@ -114,6 +199,72 @@ function Dashboard({ user, cat }) {
     }
   }
 
+  function startSession() {
+    const safeMinutes = Math.min(Math.max(sessionMinutes, 5), 180);
+
+    setSessionMinutes(safeMinutes);
+
+    setTimeElapsed(0);
+
+    setBreakSeconds(0);
+
+    setIsPaused(false);
+
+    if (timerMode === "countdown") {
+      setTimeLeft(safeMinutes * 60);
+    }
+
+    setIsStudying(true);
+  }
+
+  function toggleBreak() {
+    setIsPaused(!isPaused);
+  }
+
+  async function endSession() {
+    setIsStudying(false);
+
+    setIsPaused(false);
+
+    const studiedMinutes = Math.floor(timeElapsed / 60);
+
+    const breakMinutes = Math.ceil(breakSeconds / 60);
+
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/session/complete`,
+        {
+          studiedMinutes,
+          breakMinutes,
+          subjectId: selectedSubject?._id,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      setUser(response.data.user);
+
+      if (response.data.rewardAllowed) {
+        alert(
+          `Session complete!
+
++${response.data.xpEarned} XP
++${response.data.coinsEarned} Coins
++${response.data.happinessEarned}% Happiness`,
+        );
+      } else {
+        alert("Break exceeded 7 minutes.\nNo XP or coins earned.");
+      }
+    } catch (err) {
+      console.log(err.response?.data?.err || "Could not complete session");
+    }
+  }
+
   function moveCat(event) {
     const room = event.currentTarget.getBoundingClientRect();
 
@@ -149,9 +300,70 @@ function Dashboard({ user, cat }) {
         </section>
 
         <section className="dashboard-actions">
-          <div className="panel fixed-panel">
+          <div className="panel fixed-panel timer-panel">
             <h2>Study Timer</h2>
-            <p className="timer-text">10:00</p>
+
+            <div className="timer-mode-switch">
+              <button
+                disabled={isStudying}
+                className={timerMode === "countdown" ? "active-mode" : ""}
+                onClick={() => setTimerMode("countdown")}
+              >
+                Countdown
+              </button>
+
+              <button
+                disabled={isStudying}
+                className={timerMode === "stopwatch" ? "active-mode" : ""}
+                onClick={() => setTimerMode("stopwatch")}
+              >
+                Stopwatch
+              </button>
+            </div>
+            <p className="timer-text">
+              {timerMode === "countdown"
+                ? formatTime(timeLeft)
+                : formatTime(timeElapsed)}
+            </p>
+
+            {isPaused && (
+              <p className="break-text">
+                Break: {formatTime(breakSeconds)} / 7:00
+                <br />
+                Over 7 minutes = no XP or coins.
+              </p>
+            )}
+
+            {!isStudying && timerMode === "countdown" && (
+              <div className="slider-section">
+                <label>Session Length: {sessionMinutes} min</label>
+
+                <input
+                  type="range"
+                  min="5"
+                  max="180"
+                  step="5"
+                  value={sessionMinutes}
+                  onChange={(event) =>
+                    setSessionMinutes(Number(event.target.value))
+                  }
+                />
+              </div>
+            )}
+
+            {!isStudying ? (
+              <button onClick={startSession}>Start Session</button>
+            ) : (
+              <>
+                <button onClick={toggleBreak}>
+                  {isPaused ? "Resume Study" : "Pause for Break"}
+                </button>
+
+                <button className="end-session-button" onClick={endSession}>
+                  End Session
+                </button>
+              </>
+            )}
           </div>
 
           <div className="panel fixed-panel subjects-panel">
@@ -212,9 +424,12 @@ function Dashboard({ user, cat }) {
           <div className="panel fixed-panel cat-info-panel">
             <h2>{cat.name}</h2>
 
-            <p>Level: 1</p>
-            <p>XP: 0 / 100</p>
-            <p>Happiness: {cat.happiness || 50}%</p>
+            <p>Level: {user.level}</p>
+            <p>
+              XP: {user.xp} / {user.level * 100}
+            </p>
+            <p>Coins: {user.coins}</p>
+            <p>Happiness: {user.happiness}%</p>
           </div>
         </section>
 

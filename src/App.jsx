@@ -27,9 +27,25 @@ function App() {
       );
 
       setCat(response.data);
+      return response.data;
     } catch (err) {
       setCat(null);
+      return null;
     }
+  }
+
+  async function getCurrentUser(token) {
+    const response = await axios.get(
+      `${import.meta.env.VITE_BACKEND_URL}/auth`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    setUser(response.data);
+    return response.data;
   }
 
   useEffect(() => {
@@ -38,8 +54,7 @@ function App() {
 
       if (token) {
         try {
-          const userInfo = JSON.parse(atob(token.split(".")[1])).payload;
-          setUser(userInfo);
+          await getCurrentUser(token);
           await checkCat(token);
         } catch (err) {
           console.error("Invalid token:", err);
@@ -108,7 +123,7 @@ function App() {
           element={
             user ? (
               cat ? (
-                <Dashboard user={user} cat={cat} />
+                <Dashboard user={user} setUser={setUser} cat={cat} />
               ) : (
                 <Navigate to="/create-cat" />
               )

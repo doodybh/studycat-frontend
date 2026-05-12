@@ -81,7 +81,7 @@ input:focus {
   border-color: #ff82bd;
 }
 
-input[type='color'] {
+input[type="color"] {
   height: 54px;
   padding: 6px;
   cursor: pointer;
@@ -164,7 +164,9 @@ button:hover {
 .draggable-cat {
   position: absolute;
   transform: translate(-50%, -50%);
-  transition: left 0.25s ease, top 0.25s ease;
+  transition:
+    left 0.25s ease,
+    top 0.25s ease;
   width: 220px;
   text-align: center;
   cursor: grab;
@@ -326,4 +328,150 @@ button:hover {
   .fixed-panel {
     height: 300px;
   }
+}
+
+.timer-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.timer-text {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #ff6fa9;
+  margin: 0;
+}
+
+.break-text {
+  background: #fff7fb;
+  border: 2px solid #f1cfe0;
+  border-radius: 14px;
+  padding: 10px;
+  color: #e63966;
+  font-weight: 700;
+}
+
+.session-length {
+  text-align: left;
+}
+
+.session-length label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 700;
+  color: #50495f;
+}
+
+.end-session-button {
+  background: #ffb3c7;
+}
+
+.end-session-button:hover {
+  background: #ff8fab;
+}
+
+.timer-mode-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.timer-mode-switch button {
+  background: #ffe3ef;
+  color: #4b4453;
+}
+
+.active-mode {
+  background: #ff82bd !important;
+  color: white !important;
+}
+
+.slider-section {
+  text-align: left;
+}
+
+.slider-section label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 700;
+  color: #50495f;
+}
+
+.slider-section input[type="range"] {
+  padding: 0;
+  border: none;
+}
+.fixed-panel {
+  height: 390px;
+  overflow: hidden;
+}
+
+.timer-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+}
+
+.timer-text {
+  font-size: 2.6rem;
+  font-weight: 800;
+  color: #ff6fa9;
+  margin: 0;
+}
+
+.timer-mode-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.timer-mode-switch button {
+  background: #ffe3ef;
+  color: #4b4453;
+}
+
+.active-mode {
+  background: #ff82bd !important;
+  color: white !important;
+}
+
+.slider-section {
+  text-align: left;
+}
+
+.slider-section label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 700;
+  color: #50495f;
+}
+
+.slider-section input[type="range"] {
+  padding: 0;
+  border: none;
+}
+
+.break-text {
+  background: #fff7fb;
+  border: 2px solid #f1cfe0;
+  border-radius: 14px;
+  padding: 10px;
+  color: #e63966;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.end-session-button {
+  background: #ffb3c7;
+}
+
+.end-session-button:hover {
+  background: #ff8fab;
+}
+
+.timer-mode-switch button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
