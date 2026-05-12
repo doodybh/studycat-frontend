@@ -3,6 +3,9 @@ import axios from "axios";
 import { useNavigate } from "react-router";
 import CatPreview from "../components/CatPreview";
 
+import { colornames } from "color-name-list";
+import nearestColor from "nearest-color";
+
 function CreateCat() {
   const navigate = useNavigate();
 
@@ -12,6 +15,16 @@ function CreateCat() {
   });
 
   const [errorMessage, setErrorMessage] = useState("");
+
+  const colors = {};
+
+  colornames.forEach((color) => {
+    colors[color.name] = color.hex;
+  });
+
+  const nearest = nearestColor.from(colors);
+
+  const colorName = nearest(formData.color).name;
 
   function handleChange(event) {
     setFormData({ ...formData, [event.target.name]: event.target.value });
@@ -36,46 +49,48 @@ function CreateCat() {
   }
 
   return (
-    <div>
-      <h1>Create Your Study Cat</h1>
+    <main className="page-center">
+      <section className="card">
+        <h1 className="title">Create Your Study Cat</h1>
 
-      <CatPreview color={formData.color} />
+        <CatPreview color={formData.color} />
 
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="name">Cat Name:</label>
-          <input
-            id="name"
-            name="name"
-            type="text"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
-        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="name">Cat Name:</label>
 
-        <div>
-          <label htmlFor="color">Cat Color:</label>
-          <input
-            id="color"
-            name="color"
-            type="color"
-            value={formData.color}
-            onChange={handleChange}
-          />
-        </div>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-        <p>Selected color: {formData.color}</p>
+          <div className="form-group">
+            <label htmlFor="color">Cat Color:</label>
 
-        <button type="submit">Create Cat</button>
-      </form>
+            <input
+              id="color"
+              name="color"
+              type="color"
+              value={formData.color}
+              onChange={handleChange}
+            />
+          </div>
 
-      {errorMessage && (
-        <p style={{ color: "red" }} role="alert">
-          {errorMessage}
-        </p>
-      )}
-    </div>
+          <p className="selected-color">
+            Selected color: {colorName} ({formData.color})
+          </p>
+
+          <button type="submit">Create Cat</button>
+        </form>
+
+        {errorMessage && <p className="error">{errorMessage}</p>}
+      </section>
+    </main>
   );
 }
 
