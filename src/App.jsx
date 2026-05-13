@@ -123,7 +123,12 @@ function App() {
           element={
             user ? (
               cat ? (
-                <Dashboard user={user} setUser={setUser} cat={cat} />
+                <Dashboard
+                  user={user}
+                  setUser={setUser}
+                  cat={cat}
+                  setCat={setCat}
+                />
               ) : (
                 <Navigate to="/create-cat" />
               )

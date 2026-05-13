@@ -540,3 +540,127 @@ button:hover {
   height: 38px !important;
   padding: 4px !important;
 }
+
+.inventory-layout {
+  display: grid;
+  grid-template-columns: 230px 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.inventory-main {
+  min-width: 0;
+}
+
+.inventory-panel {
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+
+  background: white;
+  border: 1px solid #f5d8e7;
+  border-radius: 28px;
+  padding: 22px;
+
+  box-shadow: 0 12px 30px rgba(255, 111, 169, 0.08);
+}
+
+.inventory-panel h2 {
+  margin-top: 0;
+  margin-bottom: 18px;
+  color: #38334a;
+}
+
+.inventory-tabs {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.inventory-tabs button {
+  height: 48px;
+  border-radius: 16px;
+  background: #f3d7e4;
+  color: #4b4453;
+  font-weight: 700;
+}
+
+.inventory-tabs button.active-mode {
+  background: #ff75b5 !important;
+  color: white !important;
+}
+
+.inventory-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.inventory-item {
+  width: 100%;
+  aspect-ratio: 1;
+
+  border-radius: 20px;
+  border: 2px solid #f1cfe0;
+
+  background: #fffafd;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 10px;
+
+  overflow: hidden;
+
+  transition: 0.2s ease;
+}
+
+.inventory-item:hover {
+  transform: translateY(-2px);
+  border-color: #ff9fca;
+}
+
+.inventory-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+
+  image-rendering: pixelated;
+}
+
+.inventory-item span {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #38334a;
+}
+
+.equipped-item {
+  border-color: #ff75b5;
+  background: #ffe0ee;
+  box-shadow: 0 0 0 3px rgba(255, 117, 181, 0.12);
+}
+
+.inventory-background-img {
+  width: 100% !important;
+  height: 100% !important;
+
+  object-fit: contain !important;
+
+  border-radius: 14px;
+
+  image-rendering: auto !important;
+}
+
+.inventory-panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.inventory-panel::-webkit-scrollbar-thumb {
+  background: #f3bfd7;
+  border-radius: 20px;
+}
+
+.inventory-panel::-webkit-scrollbar-track {
+  background: transparent;
+}

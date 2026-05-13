@@ -2,10 +2,34 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import CatPreview from "../components/CatPreview";
 
-import starterRoom from "../assets/backgrounds/background-1.png";
+import background1 from "../assets/backgrounds/background-1.png";
+import background2 from "../assets/backgrounds/background-2.png";
+import background3 from "../assets/backgrounds/background-3.jpg";
+import background4 from "../assets/backgrounds/background-4.png";
+import background5 from "../assets/backgrounds/background-5.png";
+import background6 from "../assets/backgrounds/background-6.gif";
 
-function Dashboard({ user, setUser, cat }) {
+import hat1 from "../assets/hats/hat-1.png";
+import hat2 from "../assets/hats/hat-2.png";
+import hat3 from "../assets/hats/hat-3.png";
+import hat4 from "../assets/hats/hat-4.png";
+import hat5 from "../assets/hats/hat-5.png";
+import hat6 from "../assets/hats/hat-6.png";
+import hat7 from "../assets/hats/hat-7.png";
+import hat8 from "../assets/hats/hat-8.png";
+
+import glasses1 from "../assets/glasses/glasses-1.png";
+import glasses2 from "../assets/glasses/glasses-2.png";
+import glasses3 from "../assets/glasses/glasses-3.png";
+import glasses4 from "../assets/glasses/glasses-4.png";
+import glasses5 from "../assets/glasses/glasses-5.png";
+import glasses6 from "../assets/glasses/glasses-6.png";
+import glasses7 from "../assets/glasses/glasses-7.png";
+import glasses8 from "../assets/glasses/glasses-8.png";
+
+function Dashboard({ user, setUser, cat, setCat }) {
   const [catPosition, setCatPosition] = useState({ x: 50, y: 55 });
+  const [shopTab, setShopTab] = useState("hats");
 
   const [subjects, setSubjects] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState(null);
@@ -29,11 +53,49 @@ function Dashboard({ user, setUser, cat }) {
   const [isPaused, setIsPaused] = useState(false);
   const [breakSeconds, setBreakSeconds] = useState(0);
 
+  const hats = [
+    { id: "", name: "None", image: null },
+    { id: "hat-1", name: "Hat 1", image: hat1 },
+    { id: "hat-2", name: "Hat 2", image: hat2 },
+    { id: "hat-3", name: "Hat 3", image: hat3 },
+    { id: "hat-4", name: "Hat 4", image: hat4 },
+    { id: "hat-5", name: "Hat 5", image: hat5 },
+    { id: "hat-6", name: "Hat 6", image: hat6 },
+    { id: "hat-7", name: "Hat 7", image: hat7 },
+    { id: "hat-8", name: "Hat 8", image: hat8 },
+  ];
+
+  const glasses = [
+    { id: "", name: "None", image: null },
+    { id: "glasses-1", name: "Glasses 1", image: glasses1 },
+    { id: "glasses-2", name: "Glasses 2", image: glasses2 },
+    { id: "glasses-3", name: "Glasses 3", image: glasses3 },
+    { id: "glasses-4", name: "Glasses 4", image: glasses4 },
+    { id: "glasses-5", name: "Glasses 5", image: glasses5 },
+    { id: "glasses-6", name: "Glasses 6", image: glasses6 },
+    { id: "glasses-7", name: "Glasses 7", image: glasses7 },
+    { id: "glasses-8", name: "Glasses 8", image: glasses8 },
+  ];
+
+  const backgroundsList = [
+    { id: "background-1", name: "Room 1", image: background1 },
+    { id: "background-2", name: "Room 2", image: background2 },
+    { id: "background-3", name: "Room 3", image: background3 },
+    { id: "background-4", name: "Room 4", image: background4 },
+    { id: "background-5", name: "Room 5", image: background5 },
+    { id: "background-6", name: "Room 6", image: background6 },
+  ];
+
   const backgrounds = {
-    "starter-room": starterRoom,
+    "background-1": background1,
+    "background-2": background2,
+    "background-3": background3,
+    "background-4": background4,
+    "background-5": background5,
+    "background-6": background6,
   };
 
-  const currentBackground = backgrounds[cat.equippedBackground] || starterRoom;
+  const currentBackground = backgrounds[cat.equippedBackground] || background1;
 
   useEffect(() => {
     getSubjects();
@@ -72,43 +134,6 @@ function Dashboard({ user, setUser, cat }) {
     return () => clearInterval(breakTimer);
   }, [isStudying, isPaused]);
 
-  useEffect(() => {
-    window.studyDebug = {
-      addTime(seconds) {
-        setTimeElapsed((prev) => prev + seconds);
-
-        if (timerMode === "countdown") {
-          setTimeLeft((prev) => Math.max(0, prev - seconds));
-        }
-      },
-
-      addBreak(seconds) {
-        setBreakSeconds((prev) => prev + seconds);
-      },
-
-      giveXP(xpAmount) {
-        setUser((prev) => ({
-          ...prev,
-          xp: prev.xp + xpAmount,
-        }));
-      },
-
-      setLevel(level) {
-        setUser((prev) => ({
-          ...prev,
-          level,
-        }));
-      },
-
-      setCoins(coins) {
-        setUser((prev) => ({
-          ...prev,
-          coins,
-        }));
-      },
-    };
-  }, [timerMode, setUser]);
-
   function formatTime(seconds) {
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -122,6 +147,27 @@ function Dashboard({ user, setUser, cat }) {
     return {
       Authorization: `Bearer ${token}`,
     };
+  }
+
+  async function equipItem(type, itemId) {
+    try {
+      const updatedCat = {
+        ...cat,
+        [type]: itemId,
+      };
+
+      const response = await axios.put(
+        `${import.meta.env.VITE_BACKEND_URL}/cat`,
+        updatedCat,
+        {
+          headers: getAuthHeaders(),
+        },
+      );
+
+      setCat(response.data);
+    } catch (err) {
+      console.log(err.response?.data?.err || "Could not equip item");
+    }
   }
 
   async function getSubjects() {
@@ -352,237 +398,325 @@ function Dashboard({ user, setUser, cat }) {
   return (
     <main className="dashboard-page">
       <div className="app-container">
-        <h1 className="dashboard-title">Welcome, {user.username}</h1>
+        <div className="inventory-layout">
+          <aside className="panel inventory-panel">
+            <h2>Inventory</h2>
 
-        <section className="room-container">
-          <div
-            className="room-background"
-            onClick={moveCat}
-            style={{
-              backgroundImage: `url(${currentBackground})`,
-            }}
-          >
-            <div
-              className="draggable-cat"
-              style={{
-                left: `${catPosition.x}%`,
-                top: `${catPosition.y}%`,
-              }}
-            >
-              <CatPreview color={cat.color} />
-            </div>
-          </div>
-        </section>
-
-        <section className="dashboard-actions">
-          <div className="panel fixed-panel timer-panel">
-            <h2>Study Timer</h2>
-
-            <div className="timer-mode-switch">
+            <div className="inventory-tabs">
               <button
-                disabled={isStudying}
-                className={timerMode === "countdown" ? "active-mode" : ""}
-                onClick={() => setTimerMode("countdown")}
+                className={shopTab === "hats" ? "active-mode" : ""}
+                onClick={() => setShopTab("hats")}
               >
-                Countdown
+                Hats
               </button>
 
               <button
-                disabled={isStudying}
-                className={timerMode === "stopwatch" ? "active-mode" : ""}
-                onClick={() => setTimerMode("stopwatch")}
+                className={shopTab === "glasses" ? "active-mode" : ""}
+                onClick={() => setShopTab("glasses")}
               >
-                Stopwatch
+                Glasses
+              </button>
+
+              <button
+                className={shopTab === "backgrounds" ? "active-mode" : ""}
+                onClick={() => setShopTab("backgrounds")}
+              >
+                Rooms
               </button>
             </div>
 
-            <p className="timer-text">
-              {timerMode === "countdown"
-                ? formatTime(timeLeft)
-                : formatTime(timeElapsed)}
-            </p>
+            <div className="inventory-grid">
+              {shopTab === "hats" &&
+                hats.map((hat) => (
+                  <button
+                    key={hat.id || "no-hat"}
+                    className={`inventory-item ${
+                      cat.equippedHat === hat.id ? "equipped-item" : ""
+                    }`}
+                    onClick={() => equipItem("equippedHat", hat.id)}
+                  >
+                    {hat.image ? (
+                      <img src={hat.image} alt={hat.name} />
+                    ) : (
+                      <span>None</span>
+                    )}
+                  </button>
+                ))}
 
-            {isPaused && (
-              <p className="break-text">
-                Break: {formatTime(breakSeconds)} / 7:00
-                <br />
-                Over 7 minutes = no XP or coins.
-              </p>
-            )}
+              {shopTab === "glasses" &&
+                glasses.map((glass) => (
+                  <button
+                    key={glass.id || "no-glasses"}
+                    className={`inventory-item ${
+                      cat.equippedGlasses === glass.id ? "equipped-item" : ""
+                    }`}
+                    onClick={() => equipItem("equippedGlasses", glass.id)}
+                  >
+                    {glass.image ? (
+                      <img src={glass.image} alt={glass.name} />
+                    ) : (
+                      <span>None</span>
+                    )}
+                  </button>
+                ))}
 
-            {!isStudying && timerMode === "countdown" && (
-              <div className="slider-section">
-                <label>Session Length: {sessionMinutes} min</label>
-
-                <input
-                  type="range"
-                  min="5"
-                  max="180"
-                  step="5"
-                  value={sessionMinutes}
-                  onChange={(event) =>
-                    setSessionMinutes(Number(event.target.value))
-                  }
-                />
-              </div>
-            )}
-
-            {!isStudying ? (
-              <button onClick={startSession}>Start Session</button>
-            ) : (
-              <>
-                <button onClick={toggleBreak}>
-                  {isPaused ? "Resume Study" : "Pause for Break"}
-                </button>
-
-                <button className="end-session-button" onClick={endSession}>
-                  End Session
-                </button>
-              </>
-            )}
-          </div>
-
-          <div className="panel fixed-panel subjects-panel">
-            <div className="subjects-header">
-              <h2>Subjects</h2>
-
-              <button className="add-subject-button" onClick={addSubject}>
-                +
-              </button>
+              {shopTab === "backgrounds" &&
+                backgroundsList.map((background) => (
+                  <button
+                    key={background.id}
+                    className={`inventory-item ${
+                      cat.equippedBackground === background.id
+                        ? "equipped-item"
+                        : ""
+                    }`}
+                    onClick={() =>
+                      equipItem("equippedBackground", background.id)
+                    }
+                  >
+                    <img src={background.image} alt={background.name} />
+                  </button>
+                ))}
             </div>
+          </aside>
 
-            <div className="subject-form">
-              <input
-                type="text"
-                placeholder="New subject..."
-                value={newSubject.name}
-                onChange={(event) =>
-                  setNewSubject({
-                    ...newSubject,
-                    name: event.target.value,
-                  })
-                }
-              />
+          <div className="inventory-main">
+            <h1 className="dashboard-title">Welcome, {user.username}</h1>
 
-              <input
-                className="subject-color-picker"
-                type="color"
-                value={newSubject.color}
-                onChange={(event) =>
-                  setNewSubject({
-                    ...newSubject,
-                    color: event.target.value,
-                  })
-                }
-              />
-            </div>
-
-            <div className="subjects-list">
-              {subjects.map((subject) => (
+            <section className="room-container">
+              <div
+                className="room-background"
+                onClick={moveCat}
+                style={{
+                  backgroundImage: `url(${currentBackground})`,
+                }}
+              >
                 <div
-                  key={subject._id}
-                  className="subject-row"
+                  className="draggable-cat"
                   style={{
-                    borderLeftColor: subject.color,
+                    left: `${catPosition.x}%`,
+                    top: `${catPosition.y}%`,
                   }}
                 >
-                  {editingSubjectId === subject._id ? (
-                    <>
-                      <input
-                        className="edit-subject-input"
-                        type="text"
-                        value={editSubject.name}
-                        onChange={(event) =>
-                          setEditSubject({
-                            ...editSubject,
-                            name: event.target.value,
-                          })
-                        }
-                      />
-
-                      <input
-                        className="edit-subject-color"
-                        type="color"
-                        value={editSubject.color}
-                        onChange={(event) =>
-                          setEditSubject({
-                            ...editSubject,
-                            color: event.target.value,
-                          })
-                        }
-                      />
-
-                      <button
-                        className="subject-icon-button"
-                        onClick={() => saveEditSubject(subject)}
-                      >
-                        ✓
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <button
-                        className={`subject-button ${
-                          selectedSubject?._id === subject._id
-                            ? "selected-subject"
-                            : ""
-                        }`}
-                        onClick={() => setSelectedSubject(subject)}
-                      >
-                        {subject.name}
-                      </button>
-
-                      <button
-                        className="subject-icon-button"
-                        onClick={() => startEditSubject(subject)}
-                      >
-                        ✎
-                      </button>
-
-                      <button
-                        className="subject-icon-button delete-subject-button"
-                        onClick={() => deleteSubject(subject._id)}
-                      >
-                        🗑
-                      </button>
-                    </>
-                  )}
+                  <CatPreview
+                    color={cat.color}
+                    equippedHat={cat.equippedHat}
+                    equippedGlasses={cat.equippedGlasses}
+                  />
                 </div>
-              ))}
-            </div>
+              </div>
+            </section>
+
+            <section className="dashboard-actions">
+              <div className="panel fixed-panel timer-panel">
+                <h2>Study Timer</h2>
+
+                <div className="timer-mode-switch">
+                  <button
+                    disabled={isStudying}
+                    className={timerMode === "countdown" ? "active-mode" : ""}
+                    onClick={() => setTimerMode("countdown")}
+                  >
+                    Countdown
+                  </button>
+
+                  <button
+                    disabled={isStudying}
+                    className={timerMode === "stopwatch" ? "active-mode" : ""}
+                    onClick={() => setTimerMode("stopwatch")}
+                  >
+                    Stopwatch
+                  </button>
+                </div>
+
+                <p className="timer-text">
+                  {timerMode === "countdown"
+                    ? formatTime(timeLeft)
+                    : formatTime(timeElapsed)}
+                </p>
+
+                {isPaused && (
+                  <p className="break-text">
+                    Break: {formatTime(breakSeconds)} / 7:00
+                    <br />
+                    Over 7 minutes = no XP or coins.
+                  </p>
+                )}
+
+                {!isStudying && timerMode === "countdown" && (
+                  <div className="slider-section">
+                    <label>Session Length: {sessionMinutes} min</label>
+
+                    <input
+                      type="range"
+                      min="5"
+                      max="180"
+                      step="5"
+                      value={sessionMinutes}
+                      onChange={(event) =>
+                        setSessionMinutes(Number(event.target.value))
+                      }
+                    />
+                  </div>
+                )}
+
+                {!isStudying ? (
+                  <button onClick={startSession}>Start Session</button>
+                ) : (
+                  <>
+                    <button onClick={toggleBreak}>
+                      {isPaused ? "Resume Study" : "Pause for Break"}
+                    </button>
+
+                    <button className="end-session-button" onClick={endSession}>
+                      End Session
+                    </button>
+                  </>
+                )}
+              </div>
+
+              <div className="panel fixed-panel subjects-panel">
+                <div className="subjects-header">
+                  <h2>Subjects</h2>
+
+                  <button className="add-subject-button" onClick={addSubject}>
+                    +
+                  </button>
+                </div>
+
+                <div className="subject-form">
+                  <input
+                    type="text"
+                    placeholder="New subject..."
+                    value={newSubject.name}
+                    onChange={(event) =>
+                      setNewSubject({
+                        ...newSubject,
+                        name: event.target.value,
+                      })
+                    }
+                  />
+
+                  <input
+                    className="subject-color-picker"
+                    type="color"
+                    value={newSubject.color}
+                    onChange={(event) =>
+                      setNewSubject({
+                        ...newSubject,
+                        color: event.target.value,
+                      })
+                    }
+                  />
+                </div>
+
+                <div className="subjects-list">
+                  {subjects.map((subject) => (
+                    <div
+                      key={subject._id}
+                      className="subject-row"
+                      style={{
+                        borderLeftColor: subject.color,
+                      }}
+                    >
+                      {editingSubjectId === subject._id ? (
+                        <>
+                          <input
+                            className="edit-subject-input"
+                            type="text"
+                            value={editSubject.name}
+                            onChange={(event) =>
+                              setEditSubject({
+                                ...editSubject,
+                                name: event.target.value,
+                              })
+                            }
+                          />
+
+                          <input
+                            className="edit-subject-color"
+                            type="color"
+                            value={editSubject.color}
+                            onChange={(event) =>
+                              setEditSubject({
+                                ...editSubject,
+                                color: event.target.value,
+                              })
+                            }
+                          />
+
+                          <button
+                            className="subject-icon-button"
+                            onClick={() => saveEditSubject(subject)}
+                          >
+                            ✓
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            className={`subject-button ${
+                              selectedSubject?._id === subject._id
+                                ? "selected-subject"
+                                : ""
+                            }`}
+                            onClick={() => setSelectedSubject(subject)}
+                          >
+                            {subject.name}
+                          </button>
+
+                          <button
+                            className="subject-icon-button"
+                            onClick={() => startEditSubject(subject)}
+                          >
+                            ✎
+                          </button>
+
+                          <button
+                            className="subject-icon-button delete-subject-button"
+                            onClick={() => deleteSubject(subject._id)}
+                          >
+                            🗑
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="panel fixed-panel cat-info-panel">
+                <h2>{cat.name}</h2>
+
+                <p>Level: {user.level}</p>
+                <p>
+                  XP: {user.xp} / {user.level * 100}
+                </p>
+                <p>Coins: {user.coins}</p>
+                <p>Happiness: {user.happiness}%</p>
+              </div>
+            </section>
+
+            <section className="notes-card">
+              <div className="notes-header">
+                <h2>
+                  Notes
+                  {selectedSubject ? `: ${selectedSubject.name}` : ""}
+                </h2>
+              </div>
+
+              <textarea
+                placeholder={
+                  selectedSubject
+                    ? "Write your notes here..."
+                    : "Select or create a subject first..."
+                }
+                value={selectedSubject?.notes || ""}
+                onChange={updateNotes}
+                disabled={!selectedSubject}
+              />
+            </section>
           </div>
-
-          <div className="panel fixed-panel cat-info-panel">
-            <h2>{cat.name}</h2>
-
-            <p>Level: {user.level}</p>
-            <p>
-              XP: {user.xp} / {user.level * 100}
-            </p>
-            <p>Coins: {user.coins}</p>
-            <p>Happiness: {user.happiness}%</p>
-          </div>
-        </section>
-
-        <section className="notes-card">
-          <div className="notes-header">
-            <h2>
-              Notes
-              {selectedSubject ? `: ${selectedSubject.name}` : ""}
-            </h2>
-          </div>
-
-          <textarea
-            placeholder={
-              selectedSubject
-                ? "Write your notes here..."
-                : "Select or create a subject first..."
-            }
-            value={selectedSubject?.notes || ""}
-            onChange={updateNotes}
-            disabled={!selectedSubject}
-          />
-        </section>
+        </div>
       </div>
     </main>
   );
