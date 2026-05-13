@@ -79,7 +79,7 @@ function App() {
       <Navbar user={user} setUser={setUser} setCat={setCat} />
 
       <Routes>
-        <Route path="/" element={<Homepage />} />
+        <Route path="/" element={<Homepage user={user} />} />
 
         <Route
           path="/sign-up"
