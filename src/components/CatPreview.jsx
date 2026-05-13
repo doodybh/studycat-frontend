@@ -108,7 +108,7 @@ function CatPreview({ color, equippedHat, equippedGlasses }) {
           alt="glasses"
           style={{
             position: "absolute",
-            top: "42px",
+            top: equippedGlasses === "glasses-8" ? "46px" : "42px",
             left: "45%",
             transform: "translateX(-50%)",
             width: "95px",
