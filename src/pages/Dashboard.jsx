@@ -31,6 +31,12 @@ function Dashboard({ user, setUser, cat, setCat }) {
   const [catPosition, setCatPosition] = useState({ x: 50, y: 55 });
   const [shopTab, setShopTab] = useState("hats");
 
+  const [isEditingCat, setIsEditingCat] = useState(false);
+  const [editCat, setEditCat] = useState({
+    name: cat.name,
+    color: cat.color,
+  });
+
   const [subjects, setSubjects] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState(null);
 
@@ -275,6 +281,37 @@ function Dashboard({ user, setUser, cat, setCat }) {
     };
   }
 
+  function startEditCat() {
+    setIsEditingCat(true);
+    setEditCat({
+      name: cat.name,
+      color: cat.color,
+    });
+  }
+
+  function cancelEditCat() {
+    setIsEditingCat(false);
+  }
+
+  async function saveEditCat() {
+    if (!editCat.name.trim()) return;
+
+    try {
+      const response = await axios.put(
+        `${import.meta.env.VITE_BACKEND_URL}/cat/edit`,
+        editCat,
+        {
+          headers: getAuthHeaders(),
+        },
+      );
+
+      setCat(response.data);
+      setIsEditingCat(false);
+    } catch (err) {
+      alert(err.response?.data?.err || "Could not edit cat");
+    }
+  }
+
   async function equipItem(type, item) {
     try {
       const response = await axios.put(
@@ -304,11 +341,8 @@ function Dashboard({ user, setUser, cat, setCat }) {
     isBackground = false,
   ) {
     const isLocked = user.level < item.level;
-
     const isOwned =
       item.id === "" || item.cost === 0 || ownedItems.includes(item.id);
-
-    const canBuy = !isLocked && !isOwned;
 
     return (
       <button
@@ -359,12 +393,7 @@ function Dashboard({ user, setUser, cat, setCat }) {
       );
 
       setSubjects(response.data);
-
-      if (response.data.length > 0) {
-        setSelectedSubject(response.data[0]);
-      } else {
-        setSelectedSubject(null);
-      }
+      setSelectedSubject(response.data[0] || null);
     } catch (err) {
       console.log(err.response?.data?.err || "Could not get subjects");
     }
@@ -844,22 +873,68 @@ function Dashboard({ user, setUser, cat, setCat }) {
               </div>
 
               <div className="panel fixed-panel cat-info-panel">
-                <h2>{cat.name}</h2>
+                {isEditingCat ? (
+                  <>
+                    <h2>Edit Cat</h2>
 
-                <p>Level: {user.level}</p>
-                <p>
-                  XP: {user.xp} / {user.level * 100}
-                </p>
-                <p>Coins: {user.coins}</p>
-                <p>Happiness: {user.happiness}%</p>
+                    <div
+                      style={{
+                        transform: "scale(0.55)",
+                        transformOrigin: "center",
+                        height: "150px",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        margin: "-40px 0 -20px",
+                      }}
+                    >
+                      <CatPreview
+                        color={editCat.color}
+                        equippedHat={cat.equippedHat}
+                        equippedGlasses={cat.equippedGlasses}
+                      />
+                    </div>
+
+                    <input
+                      type="text"
+                      value={editCat.name}
+                      onChange={(event) =>
+                        setEditCat({ ...editCat, name: event.target.value })
+                      }
+                    />
+
+                    <input
+                      type="color"
+                      value={editCat.color}
+                      onChange={(event) =>
+                        setEditCat({ ...editCat, color: event.target.value })
+                      }
+                    />
+
+                    <button onClick={saveEditCat}>Save</button>
+                    <button onClick={cancelEditCat}>Cancel</button>
+                  </>
+                ) : (
+                  <>
+                    <h2>{cat.name}</h2>
+
+                    <p>Level: {user.level}</p>
+                    <p>
+                      XP: {user.xp} / {user.level * 100}
+                    </p>
+                    <p>Coins: {user.coins}</p>
+                    <p>Happiness: {user.happiness}%</p>
+
+                    <button onClick={startEditCat}>Edit Cat</button>
+                  </>
+                )}
               </div>
             </section>
 
             <section className="notes-card">
               <div className="notes-header">
                 <h2>
-                  Notes
-                  {selectedSubject ? `: ${selectedSubject.name}` : ""}
+                  {selectedSubject ? `${selectedSubject.name} Notes:` : ""}
                 </h2>
               </div>
 

@@ -1055,3 +1055,12 @@ button:hover {
   color: #786773;
   font-size: 0.92rem;
 }
+
+.cat-info-panel button {
+  padding: 7px;
+  margin-top: 7px;
+}
+
+.cat-info-panel input {
+  margin-bottom: 9px;
+}
