@@ -54,37 +54,37 @@ function Dashboard({ user, setUser, cat, setCat }) {
   const [breakSeconds, setBreakSeconds] = useState(0);
 
   const hats = [
-    { id: "", name: "None", image: null, level: 1 },
-    { id: "hat-1", name: "Hat 1", image: hat1, level: 2 },
-    { id: "hat-2", name: "Hat 2", image: hat2, level: 3 },
-    { id: "hat-3", name: "Hat 3", image: hat3, level: 5 },
-    { id: "hat-4", name: "Hat 4", image: hat4, level: 7 },
-    { id: "hat-5", name: "Hat 5", image: hat5, level: 9 },
-    { id: "hat-6", name: "Hat 6", image: hat6, level: 11 },
-    { id: "hat-7", name: "Hat 7", image: hat7, level: 13 },
-    { id: "hat-8", name: "Hat 8", image: hat8, level: 15 },
-  ];
+  { id: "", name: "None", image: null, level: 1, cost: 0 },
+  { id: "hat-1", name: "Hat 1", image: hat1, level: 2, cost: 20 },
+  { id: "hat-2", name: "Hat 2", image: hat2, level: 3, cost: 40 },
+  { id: "hat-3", name: "Hat 3", image: hat3, level: 5, cost: 75 },
+  { id: "hat-4", name: "Hat 4", image: hat4, level: 7, cost: 110 },
+  { id: "hat-5", name: "Hat 5", image: hat5, level: 9, cost: 150 },
+  { id: "hat-6", name: "Hat 6", image: hat6, level: 11, cost: 200 },
+  { id: "hat-7", name: "Hat 7", image: hat7, level: 13, cost: 250 },
+  { id: "hat-8", name: "Hat 8", image: hat8, level: 15, cost: 320 },
+];
 
-  const glasses = [
-    { id: "", name: "None", image: null, level: 1 },
-    { id: "glasses-1", name: "Glasses 1", image: glasses1, level: 2 },
-    { id: "glasses-2", name: "Glasses 2", image: glasses2, level: 4 },
-    { id: "glasses-3", name: "Glasses 3", image: glasses3, level: 6 },
-    { id: "glasses-4", name: "Glasses 4", image: glasses4, level: 8 },
-    { id: "glasses-5", name: "Glasses 5", image: glasses5, level: 10 },
-    { id: "glasses-6", name: "Glasses 6", image: glasses6, level: 12 },
-    { id: "glasses-7", name: "Glasses 7", image: glasses7, level: 14 },
-    { id: "glasses-8", name: "Glasses 8", image: glasses8, level: 16 },
-  ];
+const glasses = [
+  { id: "", name: "None", image: null, level: 1, cost: 0 },
+  { id: "glasses-1", name: "Glasses 1", image: glasses1, level: 2, cost: 25 },
+  { id: "glasses-2", name: "Glasses 2", image: glasses2, level: 4, cost: 55 },
+  { id: "glasses-3", name: "Glasses 3", image: glasses3, level: 6, cost: 90 },
+  { id: "glasses-4", name: "Glasses 4", image: glasses4, level: 8, cost: 130 },
+  { id: "glasses-5", name: "Glasses 5", image: glasses5, level: 10, cost: 175 },
+  { id: "glasses-6", name: "Glasses 6", image: glasses6, level: 12, cost: 220 },
+  { id: "glasses-7", name: "Glasses 7", image: glasses7, level: 14, cost: 280 },
+  { id: "glasses-8", name: "Glasses 8", image: glasses8, level: 16, cost: 350 },
+];
 
-  const backgroundsList = [
-    { id: "background-1", name: "Room 1", image: background1, level: 1 },
-    { id: "background-2", name: "Room 2", image: background2, level: 5 },
-    { id: "background-3", name: "Room 3", image: background3, level: 10 },
-    { id: "background-4", name: "Room 4", image: background4, level: 15 },
-    { id: "background-5", name: "Room 5", image: background5, level: 20 },
-    { id: "background-6", name: "Room 6", image: background6, level: 25 },
-  ];
+const backgroundsList = [
+  { id: "background-1", name: "Room 1", image: background1, level: 1, cost: 0 },
+  { id: "background-2", name: "Room 2", image: background2, level: 5, cost: 120 },
+  { id: "background-3", name: "Room 3", image: background3, level: 10, cost: 250 },
+  { id: "background-4", name: "Room 4", image: background4, level: 15, cost: 400 },
+  { id: "background-5", name: "Room 5", image: background5, level: 20, cost: 600 },
+  { id: "background-6", name: "Room 6", image: background6, level: 25, cost: 850 },
+];
 
   const backgrounds = {
     "background-1": background1,
