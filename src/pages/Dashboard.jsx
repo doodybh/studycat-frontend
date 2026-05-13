@@ -5,15 +5,18 @@ import CatPreview from "../components/CatPreview";
 import starterRoom from "../assets/backgrounds/background-1.png";
 
 function Dashboard({ user, setUser, cat }) {
-  const [catPosition, setCatPosition] = useState({
-    x: 50,
-    y: 55,
-  });
+  const [catPosition, setCatPosition] = useState({ x: 50, y: 55 });
 
   const [subjects, setSubjects] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState(null);
 
   const [newSubject, setNewSubject] = useState({
+    name: "",
+    color: "#ff82bd",
+  });
+
+  const [editingSubjectId, setEditingSubjectId] = useState(null);
+  const [editSubject, setEditSubject] = useState({
     name: "",
     color: "#ff82bd",
   });
@@ -113,16 +116,20 @@ function Dashboard({ user, setUser, cat }) {
     return `${minutes}:${secs.toString().padStart(2, "0")}`;
   }
 
+  function getAuthHeaders() {
+    const token = localStorage.getItem("token");
+
+    return {
+      Authorization: `Bearer ${token}`,
+    };
+  }
+
   async function getSubjects() {
     try {
-      const token = localStorage.getItem("token");
-
       const response = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/subjects`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: getAuthHeaders(),
         },
       );
 
@@ -130,6 +137,8 @@ function Dashboard({ user, setUser, cat }) {
 
       if (response.data.length > 0) {
         setSelectedSubject(response.data[0]);
+      } else {
+        setSelectedSubject(null);
       }
     } catch (err) {
       console.log(err.response?.data?.err || "Could not get subjects");
@@ -140,15 +149,11 @@ function Dashboard({ user, setUser, cat }) {
     if (!newSubject.name.trim()) return;
 
     try {
-      const token = localStorage.getItem("token");
-
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/subjects`,
         newSubject,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: getAuthHeaders(),
         },
       );
 
@@ -161,6 +166,89 @@ function Dashboard({ user, setUser, cat }) {
       });
     } catch (err) {
       console.log(err.response?.data?.err || "Could not add subject");
+    }
+  }
+
+  function startEditSubject(subject) {
+    setEditingSubjectId(subject._id);
+    setEditSubject({
+      name: subject.name,
+      color: subject.color,
+    });
+  }
+
+  function cancelEditSubject() {
+    setEditingSubjectId(null);
+    setEditSubject({
+      name: "",
+      color: "#ff82bd",
+    });
+  }
+
+  async function saveEditSubject(subject) {
+    if (!editSubject.name.trim()) return;
+
+    const updatedSubject = {
+      ...subject,
+      name: editSubject.name,
+      color: editSubject.color,
+    };
+
+    try {
+      const response = await axios.put(
+        `${import.meta.env.VITE_BACKEND_URL}/subjects/${subject._id}`,
+        updatedSubject,
+        {
+          headers: getAuthHeaders(),
+        },
+      );
+
+      setSubjects(
+        subjects.map((item) =>
+          item._id === subject._id ? response.data : item,
+        ),
+      );
+
+      if (selectedSubject?._id === subject._id) {
+        setSelectedSubject(response.data);
+      }
+
+      cancelEditSubject();
+    } catch (err) {
+      console.log(err.response?.data?.err || "Could not edit subject");
+    }
+  }
+
+  async function deleteSubject(subjectId) {
+    const confirmDelete = window.confirm(
+      "Delete this subject? Its notes will be deleted too.",
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_BACKEND_URL}/subjects/${subjectId}`,
+        {
+          headers: getAuthHeaders(),
+        },
+      );
+
+      const remainingSubjects = subjects.filter(
+        (subject) => subject._id !== subjectId,
+      );
+
+      setSubjects(remainingSubjects);
+
+      if (selectedSubject?._id === subjectId) {
+        setSelectedSubject(remainingSubjects[0] || null);
+      }
+
+      if (editingSubjectId === subjectId) {
+        cancelEditSubject();
+      }
+    } catch (err) {
+      console.log(err.response?.data?.err || "Could not delete subject");
     }
   }
 
@@ -183,15 +271,11 @@ function Dashboard({ user, setUser, cat }) {
     );
 
     try {
-      const token = localStorage.getItem("token");
-
       await axios.put(
         `${import.meta.env.VITE_BACKEND_URL}/subjects/${selectedSubject._id}`,
         updatedSubject,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: getAuthHeaders(),
         },
       );
     } catch (err) {
@@ -203,11 +287,8 @@ function Dashboard({ user, setUser, cat }) {
     const safeMinutes = Math.min(Math.max(sessionMinutes, 5), 180);
 
     setSessionMinutes(safeMinutes);
-
     setTimeElapsed(0);
-
     setBreakSeconds(0);
-
     setIsPaused(false);
 
     if (timerMode === "countdown") {
@@ -223,16 +304,12 @@ function Dashboard({ user, setUser, cat }) {
 
   async function endSession() {
     setIsStudying(false);
-
     setIsPaused(false);
 
     const studiedMinutes = Math.floor(timeElapsed / 60);
-
     const breakMinutes = Math.ceil(breakSeconds / 60);
 
     try {
-      const token = localStorage.getItem("token");
-
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/session/complete`,
         {
@@ -241,9 +318,7 @@ function Dashboard({ user, setUser, cat }) {
           subjectId: selectedSubject?._id,
         },
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: getAuthHeaders(),
         },
       );
 
@@ -320,6 +395,7 @@ function Dashboard({ user, setUser, cat }) {
                 Stopwatch
               </button>
             </div>
+
             <p className="timer-text">
               {timerMode === "countdown"
                 ? formatTime(timeLeft)
@@ -403,20 +479,75 @@ function Dashboard({ user, setUser, cat }) {
 
             <div className="subjects-list">
               {subjects.map((subject) => (
-                <button
+                <div
                   key={subject._id}
-                  className={`subject-button ${
-                    selectedSubject?._id === subject._id
-                      ? "selected-subject"
-                      : ""
-                  }`}
+                  className="subject-row"
                   style={{
-                    borderColor: subject.color,
+                    borderLeftColor: subject.color,
                   }}
-                  onClick={() => setSelectedSubject(subject)}
                 >
-                  {subject.name}
-                </button>
+                  {editingSubjectId === subject._id ? (
+                    <>
+                      <input
+                        className="edit-subject-input"
+                        type="text"
+                        value={editSubject.name}
+                        onChange={(event) =>
+                          setEditSubject({
+                            ...editSubject,
+                            name: event.target.value,
+                          })
+                        }
+                      />
+
+                      <input
+                        className="edit-subject-color"
+                        type="color"
+                        value={editSubject.color}
+                        onChange={(event) =>
+                          setEditSubject({
+                            ...editSubject,
+                            color: event.target.value,
+                          })
+                        }
+                      />
+
+                      <button
+                        className="subject-icon-button"
+                        onClick={() => saveEditSubject(subject)}
+                      >
+                        ✓
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        className={`subject-button ${
+                          selectedSubject?._id === subject._id
+                            ? "selected-subject"
+                            : ""
+                        }`}
+                        onClick={() => setSelectedSubject(subject)}
+                      >
+                        {subject.name}
+                      </button>
+
+                      <button
+                        className="subject-icon-button"
+                        onClick={() => startEditSubject(subject)}
+                      >
+                        ✎
+                      </button>
+
+                      <button
+                        className="subject-icon-button delete-subject-button"
+                        onClick={() => deleteSubject(subject._id)}
+                      >
+                        🗑
+                      </button>
+                    </>
+                  )}
+                </div>
               ))}
             </div>
           </div>
