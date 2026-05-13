@@ -54,37 +54,103 @@ function Dashboard({ user, setUser, cat, setCat }) {
   const [breakSeconds, setBreakSeconds] = useState(0);
 
   const hats = [
-  { id: "", name: "None", image: null, level: 1, cost: 0 },
-  { id: "hat-1", name: "Hat 1", image: hat1, level: 2, cost: 20 },
-  { id: "hat-2", name: "Hat 2", image: hat2, level: 3, cost: 40 },
-  { id: "hat-3", name: "Hat 3", image: hat3, level: 5, cost: 75 },
-  { id: "hat-4", name: "Hat 4", image: hat4, level: 7, cost: 110 },
-  { id: "hat-5", name: "Hat 5", image: hat5, level: 9, cost: 150 },
-  { id: "hat-6", name: "Hat 6", image: hat6, level: 11, cost: 200 },
-  { id: "hat-7", name: "Hat 7", image: hat7, level: 13, cost: 250 },
-  { id: "hat-8", name: "Hat 8", image: hat8, level: 15, cost: 320 },
-];
+    { id: "", name: "None", image: null, level: 1, cost: 0 },
+    { id: "hat-1", name: "Hat 1", image: hat1, level: 2, cost: 20 },
+    { id: "hat-2", name: "Hat 2", image: hat2, level: 3, cost: 40 },
+    { id: "hat-3", name: "Hat 3", image: hat3, level: 5, cost: 75 },
+    { id: "hat-4", name: "Hat 4", image: hat4, level: 7, cost: 110 },
+    { id: "hat-5", name: "Hat 5", image: hat5, level: 9, cost: 150 },
+    { id: "hat-6", name: "Hat 6", image: hat6, level: 11, cost: 200 },
+    { id: "hat-7", name: "Hat 7", image: hat7, level: 13, cost: 250 },
+    { id: "hat-8", name: "Hat 8", image: hat8, level: 15, cost: 320 },
+  ];
 
-const glasses = [
-  { id: "", name: "None", image: null, level: 1, cost: 0 },
-  { id: "glasses-1", name: "Glasses 1", image: glasses1, level: 2, cost: 25 },
-  { id: "glasses-2", name: "Glasses 2", image: glasses2, level: 4, cost: 55 },
-  { id: "glasses-3", name: "Glasses 3", image: glasses3, level: 6, cost: 90 },
-  { id: "glasses-4", name: "Glasses 4", image: glasses4, level: 8, cost: 130 },
-  { id: "glasses-5", name: "Glasses 5", image: glasses5, level: 10, cost: 175 },
-  { id: "glasses-6", name: "Glasses 6", image: glasses6, level: 12, cost: 220 },
-  { id: "glasses-7", name: "Glasses 7", image: glasses7, level: 14, cost: 280 },
-  { id: "glasses-8", name: "Glasses 8", image: glasses8, level: 16, cost: 350 },
-];
+  const glasses = [
+    { id: "", name: "None", image: null, level: 1, cost: 0 },
+    { id: "glasses-1", name: "Glasses 1", image: glasses1, level: 2, cost: 25 },
+    { id: "glasses-2", name: "Glasses 2", image: glasses2, level: 4, cost: 55 },
+    { id: "glasses-3", name: "Glasses 3", image: glasses3, level: 6, cost: 90 },
+    {
+      id: "glasses-4",
+      name: "Glasses 4",
+      image: glasses4,
+      level: 8,
+      cost: 130,
+    },
+    {
+      id: "glasses-5",
+      name: "Glasses 5",
+      image: glasses5,
+      level: 10,
+      cost: 175,
+    },
+    {
+      id: "glasses-6",
+      name: "Glasses 6",
+      image: glasses6,
+      level: 12,
+      cost: 220,
+    },
+    {
+      id: "glasses-7",
+      name: "Glasses 7",
+      image: glasses7,
+      level: 14,
+      cost: 280,
+    },
+    {
+      id: "glasses-8",
+      name: "Glasses 8",
+      image: glasses8,
+      level: 16,
+      cost: 350,
+    },
+  ];
 
-const backgroundsList = [
-  { id: "background-1", name: "Room 1", image: background1, level: 1, cost: 0 },
-  { id: "background-2", name: "Room 2", image: background2, level: 5, cost: 120 },
-  { id: "background-3", name: "Room 3", image: background3, level: 10, cost: 250 },
-  { id: "background-4", name: "Room 4", image: background4, level: 15, cost: 400 },
-  { id: "background-5", name: "Room 5", image: background5, level: 20, cost: 600 },
-  { id: "background-6", name: "Room 6", image: background6, level: 25, cost: 850 },
-];
+  const backgroundsList = [
+    {
+      id: "background-1",
+      name: "Room 1",
+      image: background1,
+      level: 1,
+      cost: 0,
+    },
+    {
+      id: "background-2",
+      name: "Room 2",
+      image: background2,
+      level: 5,
+      cost: 120,
+    },
+    {
+      id: "background-3",
+      name: "Room 3",
+      image: background3,
+      level: 10,
+      cost: 250,
+    },
+    {
+      id: "background-4",
+      name: "Room 4",
+      image: background4,
+      level: 15,
+      cost: 400,
+    },
+    {
+      id: "background-5",
+      name: "Room 5",
+      image: background5,
+      level: 20,
+      cost: 600,
+    },
+    {
+      id: "background-6",
+      name: "Room 6",
+      image: background6,
+      level: 25,
+      cost: 850,
+    },
+  ];
 
   const backgrounds = {
     "background-1": background1,
@@ -134,6 +200,66 @@ const backgroundsList = [
     return () => clearInterval(breakTimer);
   }, [isStudying, isPaused]);
 
+  useEffect(() => {
+    window.studyDebug = {
+      addTime(seconds) {
+        setTimeElapsed((prev) => prev + seconds);
+
+        if (timerMode === "countdown") {
+          setTimeLeft((prev) => Math.max(0, prev - seconds));
+        }
+      },
+
+      addBreak(seconds) {
+        setBreakSeconds((prev) => prev + seconds);
+      },
+
+      async giveXP(xpAmount) {
+        try {
+          const currentXP = user?.xp || 0;
+
+          const response = await axios.put(
+            `${import.meta.env.VITE_BACKEND_URL}/auth/debug`,
+            { xp: currentXP + xpAmount },
+            { headers: getAuthHeaders() },
+          );
+
+          setUser(response.data);
+        } catch (err) {
+          console.log(err.response?.data?.err || "Could not give XP");
+        }
+      },
+
+      async setLevel(level) {
+        try {
+          const response = await axios.put(
+            `${import.meta.env.VITE_BACKEND_URL}/auth/debug`,
+            { level },
+            { headers: getAuthHeaders() },
+          );
+
+          setUser(response.data);
+        } catch (err) {
+          console.log(err.response?.data?.err || "Could not set level");
+        }
+      },
+
+      async setCoins(coins) {
+        try {
+          const response = await axios.put(
+            `${import.meta.env.VITE_BACKEND_URL}/auth/debug`,
+            { coins },
+            { headers: getAuthHeaders() },
+          );
+
+          setUser(response.data);
+        } catch (err) {
+          console.log(err.response?.data?.err || "Could not set coins");
+        }
+      },
+    };
+  }, [timerMode, setUser, user]);
+
   function formatTime(seconds) {
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -149,25 +275,78 @@ const backgroundsList = [
     };
   }
 
-  async function equipItem(type, itemId) {
+  async function equipItem(type, item) {
     try {
-      const updatedCat = {
-        ...cat,
-        [type]: itemId,
-      };
-
       const response = await axios.put(
         `${import.meta.env.VITE_BACKEND_URL}/cat`,
-        updatedCat,
+        {
+          type,
+          id: item.id,
+          cost: item.cost,
+        },
         {
           headers: getAuthHeaders(),
         },
       );
 
-      setCat(response.data);
+      setCat(response.data.cat);
+      setUser(response.data.user);
     } catch (err) {
-      console.log(err.response?.data?.err || "Could not equip item");
+      alert(err.response?.data?.err || "Could not buy/equip item");
     }
+  }
+
+  function renderInventoryItem(
+    item,
+    equippedValue,
+    type,
+    ownedItems = [],
+    isBackground = false,
+  ) {
+    const isLocked = user.level < item.level;
+
+    const isOwned =
+      item.id === "" || item.cost === 0 || ownedItems.includes(item.id);
+
+    const canBuy = !isLocked && !isOwned;
+
+    return (
+      <button
+        key={item.id || `none-${type}`}
+        disabled={isLocked}
+        className={`inventory-item ${
+          equippedValue === item.id ? "equipped-item" : ""
+        } ${isLocked ? "locked-item" : ""}`}
+        onClick={() => {
+          if (!isLocked) {
+            equipItem(type, item);
+          }
+        }}
+      >
+        {item.image ? (
+          <img
+            className={isBackground ? "inventory-background-img" : ""}
+            src={item.image}
+            alt={item.name}
+          />
+        ) : (
+          <span>None</span>
+        )}
+
+        {item.id !== "" && (
+          <div className="inventory-item-info">
+            <p>{isOwned ? "Owned" : `🪙 ${item.cost}`}</p>
+          </div>
+        )}
+
+        {isLocked && (
+          <div className="lock-overlay">
+            <span>🔒</span>
+            <p>Unlocks at Level {item.level}</p>
+          </div>
+        )}
+      </button>
+    );
   }
 
   async function getSubjects() {
@@ -427,55 +606,35 @@ const backgroundsList = [
 
             <div className="inventory-grid">
               {shopTab === "hats" &&
-                hats.map((hat) => (
-                  <button
-                    key={hat.id || "no-hat"}
-                    className={`inventory-item ${
-                      cat.equippedHat === hat.id ? "equipped-item" : ""
-                    }`}
-                    onClick={() => equipItem("equippedHat", hat.id)}
-                  >
-                    {hat.image ? (
-                      <img src={hat.image} alt={hat.name} />
-                    ) : (
-                      <span>None</span>
-                    )}
-                  </button>
-                ))}
+                hats.map((hat) =>
+                  renderInventoryItem(
+                    hat,
+                    cat.equippedHat,
+                    "hat",
+                    cat.ownedHats,
+                  ),
+                )}
 
               {shopTab === "glasses" &&
-                glasses.map((glass) => (
-                  <button
-                    key={glass.id || "no-glasses"}
-                    className={`inventory-item ${
-                      cat.equippedGlasses === glass.id ? "equipped-item" : ""
-                    }`}
-                    onClick={() => equipItem("equippedGlasses", glass.id)}
-                  >
-                    {glass.image ? (
-                      <img src={glass.image} alt={glass.name} />
-                    ) : (
-                      <span>None</span>
-                    )}
-                  </button>
-                ))}
+                glasses.map((glass) =>
+                  renderInventoryItem(
+                    glass,
+                    cat.equippedGlasses,
+                    "glasses",
+                    cat.ownedGlasses,
+                  ),
+                )}
 
               {shopTab === "backgrounds" &&
-                backgroundsList.map((background) => (
-                  <button
-                    key={background.id}
-                    className={`inventory-item ${
-                      cat.equippedBackground === background.id
-                        ? "equipped-item"
-                        : ""
-                    }`}
-                    onClick={() =>
-                      equipItem("equippedBackground", background.id)
-                    }
-                  >
-                    <img src={background.image} alt={background.name} />
-                  </button>
-                ))}
+                backgroundsList.map((background) =>
+                  renderInventoryItem(
+                    background,
+                    cat.equippedBackground,
+                    "background",
+                    cat.ownedBackgrounds,
+                    true,
+                  ),
+                )}
             </div>
           </aside>
 
