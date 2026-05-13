@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router";
 
-function Signup() {
+function Signup({ showPopup }) {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -26,6 +26,10 @@ function Signup() {
         formData,
       );
 
+      showPopup(
+        "Account Created!",
+        "Your account was created successfully. Please sign in.",
+      );
       navigate("/sign-in");
     } catch (err) {
       setErrorMessage(

@@ -14,6 +14,15 @@ function App() {
   const [user, setUser] = useState(null);
   const [cat, setCat] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [popup, setPopup] = useState(null);
+
+  function showPopup(title, message, onConfirm = null) {
+    setPopup({ title, message, onConfirm });
+  }
+
+  function closePopup() {
+    setPopup(null);
+  }
 
   async function checkCat(token) {
     try {
@@ -85,7 +94,7 @@ function App() {
           path="/sign-up"
           element={
             !user ? (
-              <Signup />
+              <Signup showPopup={showPopup} />
             ) : (
               <Navigate to={cat ? "/dashboard" : "/create-cat"} />
             )
@@ -128,6 +137,7 @@ function App() {
                   setUser={setUser}
                   cat={cat}
                   setCat={setCat}
+                  showPopup={showPopup}
                 />
               ) : (
                 <Navigate to="/create-cat" />
@@ -138,6 +148,36 @@ function App() {
           }
         />
       </Routes>
+
+      {popup && (
+        <div className="popup-overlay">
+          <div className="popup-box">
+            <h2>{popup.title}</h2>
+            <p>{popup.message}</p>
+
+            <div className="popup-buttons">
+              {popup.onConfirm ? (
+                <>
+                  <button
+                    onClick={() => {
+                      popup.onConfirm();
+                      closePopup();
+                    }}
+                  >
+                    Yes
+                  </button>
+
+                  <button className="popup-cancel" onClick={closePopup}>
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <button onClick={closePopup}>OK</button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

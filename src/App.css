@@ -910,9 +910,7 @@ button:hover {
 
   overflow: hidden;
 
-  background:
-    linear-gradient(to bottom, #ffe6f1 0%, #fff3f8 65%),
-    #fff;
+  background: linear-gradient(to bottom, #ffe6f1 0%, #fff3f8 65%), #fff;
 }
 
 .preview-window {
@@ -926,8 +924,7 @@ button:hover {
 
   border-radius: 20px;
 
-  background:
-    linear-gradient(to bottom, #9ed8ff, #dff5ff);
+  background: linear-gradient(to bottom, #9ed8ff, #dff5ff);
 
   border: 6px solid white;
 }
@@ -947,7 +944,7 @@ button:hover {
 
   background: #ffb47c;
 
-  box-shadow: inset 0 -10px 0 rgba(0,0,0,0.06);
+  box-shadow: inset 0 -10px 0 rgba(0, 0, 0, 0.06);
 }
 
 .preview-cat::before,
@@ -1063,4 +1060,60 @@ button:hover {
 
 .cat-info-panel input {
   margin-bottom: 9px;
+}
+
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(47, 42, 61, 0.35);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  padding: 20px;
+}
+
+.popup-box {
+  width: 100%;
+  max-width: 420px;
+  background: white;
+  border: 1px solid #f5d8e7;
+  border-radius: 28px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 18px 45px rgba(255, 111, 169, 0.22);
+}
+
+.popup-box h2 {
+  margin-top: 0;
+  color: #38334a;
+}
+
+.popup-box p {
+  color: #6b5b68;
+  white-space: pre-line;
+  line-height: 1.6;
+}
+
+.popup-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.popup-cancel {
+  background: #ffb3c7;
+}
+
+.popup-cancel:hover {
+  background: #ff8fab;
+}
+
+.cancel-button {
+  background: #ffb3c7;
+  color: white;
+}
+
+.cancel-button:hover {
+  background: #ff8fab;
 }

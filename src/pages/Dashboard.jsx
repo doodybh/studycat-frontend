@@ -27,7 +27,7 @@ import glasses6 from "../assets/glasses/glasses-6.png";
 import glasses7 from "../assets/glasses/glasses-7.png";
 import glasses8 from "../assets/glasses/glasses-8.png";
 
-function Dashboard({ user, setUser, cat, setCat }) {
+function Dashboard({ user, setUser, cat, setCat, showPopup }) {
   const [catPosition, setCatPosition] = useState({ x: 50, y: 55 });
   const [shopTab, setShopTab] = useState("hats");
 
@@ -308,7 +308,7 @@ function Dashboard({ user, setUser, cat, setCat }) {
       setCat(response.data);
       setIsEditingCat(false);
     } catch (err) {
-      alert(err.response?.data?.err || "Could not edit cat");
+      showPopup("Error", err.response?.data?.err || "Could not edit cat");
     }
   }
 
@@ -329,7 +329,7 @@ function Dashboard({ user, setUser, cat, setCat }) {
       setCat(response.data.cat);
       setUser(response.data.user);
     } catch (err) {
-      alert(err.response?.data?.err || "Could not buy/equip item");
+      showPopup("Error", err.response?.data?.err || "Could not buy/equip item");
     }
   }
 
@@ -474,36 +474,41 @@ function Dashboard({ user, setUser, cat, setCat }) {
   }
 
   async function deleteSubject(subjectId) {
-    const confirmDelete = window.confirm(
+    showPopup(
+      "Delete Subject?",
       "Delete this subject? Its notes will be deleted too.",
+      async function () {
+        try {
+          await axios.delete(
+            `${import.meta.env.VITE_BACKEND_URL}/subjects/${subjectId}`,
+            {
+              headers: getAuthHeaders(),
+            },
+          );
+
+          const remainingSubjects = subjects.filter(
+            (subject) => subject._id !== subjectId,
+          );
+
+          setSubjects(remainingSubjects);
+
+          if (selectedSubject?._id === subjectId) {
+            setSelectedSubject(remainingSubjects[0] || null);
+          }
+
+          if (editingSubjectId === subjectId) {
+            cancelEditSubject();
+          }
+        } catch (err) {
+          showPopup(
+            "Error",
+            err.response?.data?.err || "Could not delete subject",
+          );
+        }
+      },
     );
 
-    if (!confirmDelete) return;
-
-    try {
-      await axios.delete(
-        `${import.meta.env.VITE_BACKEND_URL}/subjects/${subjectId}`,
-        {
-          headers: getAuthHeaders(),
-        },
-      );
-
-      const remainingSubjects = subjects.filter(
-        (subject) => subject._id !== subjectId,
-      );
-
-      setSubjects(remainingSubjects);
-
-      if (selectedSubject?._id === subjectId) {
-        setSelectedSubject(remainingSubjects[0] || null);
-      }
-
-      if (editingSubjectId === subjectId) {
-        cancelEditSubject();
-      }
-    } catch (err) {
-      console.log(err.response?.data?.err || "Could not delete subject");
-    }
+    return;
   }
 
   async function updateNotes(event) {
@@ -579,15 +584,17 @@ function Dashboard({ user, setUser, cat, setCat }) {
       setUser(response.data.user);
 
       if (response.data.rewardAllowed) {
-        alert(
-          `Session complete!
-
-+${response.data.xpEarned} XP
+        showPopup(
+          "Session Complete!",
+          `+${response.data.xpEarned} XP
 +${response.data.coinsEarned} Coins
 +${response.data.happinessEarned}% Happiness`,
         );
       } else {
-        alert("Break exceeded 7 minutes.\nNo XP or coins earned.");
+        showPopup(
+          "No Reward",
+          "Break exceeded 7 minutes.\nNo XP or coins earned.",
+        );
       }
     } catch (err) {
       console.log(err.response?.data?.err || "Could not complete session");
@@ -912,7 +919,7 @@ function Dashboard({ user, setUser, cat, setCat }) {
                     />
 
                     <button onClick={saveEditCat}>Save</button>
-                    <button onClick={cancelEditCat}>Cancel</button>
+                    <button onClick={cancelEditCat} className="cancel-button">Cancel</button>
                   </>
                 ) : (
                   <>
