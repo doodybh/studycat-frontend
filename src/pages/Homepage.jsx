@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router";
 
 function Homepage({ user }) {
+  useEffect(() => {
+    document.title = "StudyCat";
+  }, []);
   return (
     <main className="homepage">
       <section className="hero-section">

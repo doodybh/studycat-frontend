@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router";
 import CatPreview from "../components/CatPreview";
@@ -7,6 +7,9 @@ import { colornames } from "color-name-list";
 import nearestColor from "nearest-color";
 
 function CreateCat({ setCat }) {
+  useEffect(() => {
+    document.title = "Create Cat | StudyCat";
+  }, []);
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({

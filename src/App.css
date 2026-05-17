@@ -312,7 +312,7 @@ button:hover {
   cursor: not-allowed;
 }
 
-@media (max-width: 850px) {
+/* @media (max-width: 850px) {
   .dashboard-actions {
     grid-template-columns: 1fr;
   }
@@ -328,7 +328,7 @@ button:hover {
   .fixed-panel {
     height: 300px;
   }
-}
+} */
 
 .timer-panel {
   display: flex;
@@ -1116,4 +1116,52 @@ button:hover {
 
 .cancel-button:hover {
   background: #ff8fab;
+}
+
+.is-valid {
+  border-color: #198754 !important;
+}
+
+.is-invalid {
+  border-color: #dc3545 !important;
+}
+
+.valid-feedback {
+  display: block;
+  color: #198754;
+  font-size: 0.875rem;
+  margin-top: 6px;
+}
+
+.invalid-feedback {
+  display: block;
+  color: #dc3545;
+  font-size: 0.875rem;
+  margin-top: 6px;
+}
+
+.auth-rules {
+  margin-top: 8px;
+}
+
+.auth-rules p {
+  margin: 4px 0;
+  font-size: 0.875rem;
+}
+
+.rule-valid {
+  color: #198754;
+}
+
+.rule-invalid {
+  color: #dc3545;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+button:disabled:hover {
+  background: #ff82bd;
 }

@@ -28,6 +28,9 @@ import glasses7 from "../assets/glasses/glasses-7.png";
 import glasses8 from "../assets/glasses/glasses-8.png";
 
 function Dashboard({ user, setUser, cat, setCat, showPopup }) {
+  useEffect(() => {
+    document.title = "Dashboard | StudyCat";
+  }, []);
   const [catPosition, setCatPosition] = useState({ x: 50, y: 55 });
   const [shopTab, setShopTab] = useState("hats");
 
@@ -588,7 +591,7 @@ function Dashboard({ user, setUser, cat, setCat, showPopup }) {
           "Session Complete!",
           `+${response.data.xpEarned} XP
 +${response.data.coinsEarned} Coins
-+${response.data.happinessEarned}% Happiness`,
++${Math.min(response.data.happinessEarned, 100 - user.happiness)}% Happiness`,
         );
       } else {
         showPopup(
@@ -919,7 +922,9 @@ function Dashboard({ user, setUser, cat, setCat, showPopup }) {
                     />
 
                     <button onClick={saveEditCat}>Save</button>
-                    <button onClick={cancelEditCat} className="cancel-button">Cancel</button>
+                    <button onClick={cancelEditCat} className="cancel-button">
+                      Cancel
+                    </button>
                   </>
                 ) : (
                   <>
