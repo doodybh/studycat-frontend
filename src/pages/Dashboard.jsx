@@ -31,6 +31,7 @@ function Dashboard({ user, setUser, cat, setCat, showPopup }) {
   useEffect(() => {
     document.title = "Dashboard | StudyCat";
   }, []);
+  
   const [catPosition, setCatPosition] = useState({ x: 50, y: 55 });
   const [shopTab, setShopTab] = useState("hats");
 

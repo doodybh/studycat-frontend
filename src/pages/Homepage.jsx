@@ -5,6 +5,7 @@ function Homepage({ user }) {
   useEffect(() => {
     document.title = "StudyCat";
   }, []);
+
   return (
     <main className="homepage">
       <section className="hero-section">

@@ -8,8 +8,9 @@ import nearestColor from "nearest-color";
 
 function CreateCat({ setCat }) {
   useEffect(() => {
-    document.title = "Create Cat | StudyCat";
+    document.title = "Create Your Cat | StudyCat";
   }, []);
+
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
